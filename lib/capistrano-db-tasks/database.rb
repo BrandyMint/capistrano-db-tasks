@@ -81,10 +81,14 @@ module Database
 
     def dump_cmd_opts
       if mysql?
-        "--lock-tables=false #{dump_cmd_ignore_tables_opts} #{dump_cmd_ignore_data_tables_opts}"
+        "--lock-tables=false #{dump_cmd_ignore_tables_opts} #{dump_cmd_ignore_data_tables_opts} #{dump_cmd_extra_opts}"
       elsif postgresql?
-        "--no-acl --no-owner #{dump_cmd_ignore_tables_opts} #{dump_cmd_ignore_data_tables_opts}"
+        "--no-acl --no-owner #{dump_cmd_ignore_tables_opts} #{dump_cmd_ignore_data_tables_opts} #{dump_cmd_extra_opts}"
       end
+    end
+
+    def dump_cmd_extra_opts
+      @cap.fetch(:db_dump_extra_opts, '')
     end
 
     def dump_cmd_ignore_tables_opts

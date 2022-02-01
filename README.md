@@ -42,6 +42,9 @@ set :db_ignore_data_tables, []
 # configure location where the dump file should be created
 set :db_dump_dir, "./db"
 
+# If you want to add extra options to dump
+set :db_dump_extra_opts, ''
+
 # If you want to import assets, you can change default asset dir (default = system)
 # This directory must be in your shared directory on the server
 set :assets_dir, %w(public/assets public/att)
