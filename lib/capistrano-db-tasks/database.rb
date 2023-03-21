@@ -224,10 +224,10 @@ module Database
     end
 
     def remote_to_local(instance)
-      local_db  = Database::Local.new(instance)
+      local_db  = Database::Local.new(instance) unless ENV.key? 'SKIP_LOCAL_DB_LOAD'
       remote_db = Database::Remote.new(instance)
 
-      check(local_db, remote_db)
+      check(local_db, remote_db) unless ENV.key? 'SKIP_LOCAL_DB_LOAD'
 
       begin
         remote_db.dump.download
