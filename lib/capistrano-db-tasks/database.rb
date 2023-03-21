@@ -241,9 +241,10 @@ module Database
       local_db  = Database::Local.new(instance)
       remote_db = Database::Remote.new(instance)
 
-      check(local_db, remote_db)
-
-      local_db.dump unless ENV.key? 'SKIP_LOCAL_DB_DUMP'
+      unless ENV.key? 'SKIP_LOCAL_DB_DUMP'
+        check(local_db, remote_db)
+        local_db.dump
+      end
 
       local_db.upload
       remote_db.load(local_db.output_file, instance.fetch(:db_local_clean))
