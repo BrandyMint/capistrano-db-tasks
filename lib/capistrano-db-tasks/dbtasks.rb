@@ -37,7 +37,7 @@ namespace :db do
     desc 'Synchronize your local database using remote database data'
     task :sync do
       on roles(:db) do
-        puts "Local database: #{Database::Local.new(self).database}"
+        puts "Local database: #{Database::Local.new(self).database}" unless ENV['SKIP_LOCAL_DB_LOAD']
         if fetch(:skip_data_sync_confirm) || Util.prompt('Are you sure you want to erase your local database with server database')
           Database.remote_to_local(self)
         end
