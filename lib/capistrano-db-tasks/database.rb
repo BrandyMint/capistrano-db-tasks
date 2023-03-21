@@ -160,13 +160,17 @@ module Database
     def initialize(cap_instance)
       super(cap_instance)
       puts "Loading local database config"
-      dir_with_escaped_spaces = Dir.pwd.gsub ' ', '\ '
-      command = "#{dir_with_escaped_spaces}/bin/rails runner \"puts '#{DBCONFIG_BEGIN_FLAG}' + ActiveRecord::Base.connection.instance_variable_get(:@config).to_yaml + '#{DBCONFIG_END_FLAG}'\""
-      stdout, status = Open3.capture2(command)
-      raise "Error running command (status=#{status}): #{command}" if status != 0
+      if ENV['SKIP_LOCAL_DB_LOAD']
+        puts 'skipped'
+      else
+        dir_with_escaped_spaces = Dir.pwd.gsub ' ', '\ '
+        command = "#{dir_with_escaped_spaces}/bin/rails runner \"puts '#{DBCONFIG_BEGIN_FLAG}' + ActiveRecord::Base.connection.instance_variable_get(:@config).to_yaml + '#{DBCONFIG_END_FLAG}'\""
+        stdout, status = Open3.capture2(command)
+        raise "Error running command (status=#{status}): #{command}" if status != 0
 
-      config_content = stdout.match(/#{DBCONFIG_BEGIN_FLAG}(.*?)#{DBCONFIG_END_FLAG}/m)[1]
-      @config = YAML.load(config_content).each_with_object({}) { |(k, v), h| h[k.to_s] = v }
+        config_content = stdout.match(/#{DBCONFIG_BEGIN_FLAG}(.*?)#{DBCONFIG_END_FLAG}/m)[1]
+        @config = YAML.load(config_content).each_with_object({}) { |(k, v), h| h[k.to_s] = v }
+      end
     end
 
     # cleanup = true removes the mysqldump file after loading, false leaves it in db/
