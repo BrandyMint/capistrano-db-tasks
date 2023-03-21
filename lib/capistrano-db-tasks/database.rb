@@ -45,7 +45,7 @@ module Database
     end
 
     def output_file
-      @output_file ||= @cap.fetch(:db_dump_file, "#{database}_#{current_time}.sql.#{compressor.file_extension}")
+      @output_file ||= @cap.fetch(:db_dump_file, -> { "#{database}_#{current_time}.sql.#{compressor.file_extension}" })
     end
 
     def compressor
