@@ -184,7 +184,7 @@ module Database
     end
 
     def dump
-      execute "#{dump_cmd} | #{compressor.compress('-', output_file)}" unless ENV.key? 'SKIP_DUMP'
+      execute "#{dump_cmd} | #{compressor.compress('-', output_file)}"
       self
     end
 
@@ -230,7 +230,7 @@ module Database
       ensure
         remote_db.clean_dump_if_needed
       end
-      local_db.load(remote_db.output_file, instance.fetch(:db_local_clean))
+      local_db.load(remote_db.output_file, instance.fetch(:db_local_clean)) unless ENV.key? 'SKIP_LOCAL_DB_LOAD'
     end
 
     def local_to_remote(instance)
@@ -239,7 +239,9 @@ module Database
 
       check(local_db, remote_db)
 
-      local_db.dump.upload
+      local_db.dump unless ENV.key? 'SKIP_LOCAL_DB_DUMP'
+
+      local_db.upload
       remote_db.load(local_db.output_file, instance.fetch(:db_local_clean))
       File.unlink(local_db.output_file) if instance.fetch(:db_local_clean)
     end
