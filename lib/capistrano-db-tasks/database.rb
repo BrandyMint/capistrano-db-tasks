@@ -45,7 +45,7 @@ module Database
     end
 
     def output_file
-      @output_file ||= "#{database}_#{current_time}.sql.#{compressor.file_extension}"
+      @output_file ||= @cap.fetch(:db_dump_file, "#{database}_#{current_time}.sql.#{compressor.file_extension}")
     end
 
     def compressor
@@ -184,7 +184,7 @@ module Database
     end
 
     def dump
-      execute "#{dump_cmd} | #{compressor.compress('-', output_file)}"
+      execute "#{dump_cmd} | #{compressor.compress('-', output_file)}" unless ENV.key? 'SKIP_DUMP'
       self
     end
 
